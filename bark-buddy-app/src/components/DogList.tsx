@@ -3,9 +3,16 @@ import { Dog } from "../types";
 interface DogListProps {
   dogs: Dog[];
   loading: boolean;
+  onFavorite: (id: string) => void;
+  favorites: string[];
 }
 
-const DogList: React.FC<DogListProps> = ({ dogs, loading }) => {
+const DogList: React.FC<DogListProps> = ({
+  dogs,
+  loading,
+  onFavorite,
+  favorites,
+}) => {
   return (
     <div className="mt-6">
       {loading ? (
@@ -31,6 +38,16 @@ const DogList: React.FC<DogListProps> = ({ dogs, loading }) => {
                 <p className="text-gray-500 text-sm">
                   Zip Code: {dog.zip_code}
                 </p>
+                <button
+                  onClick={() => onFavorite(dog.id)}
+                  className={`mt-2 px-4 py-2 rounded-md ${
+                    favorites?.includes(dog.id)
+                      ? "bg-red-500 text-white"
+                      : "bg-blue-500 text-white"
+                  }`}
+                >
+                  {favorites.includes(dog.id) ? "Unfavorite" : "Favorite"}
+                </button>
               </div>
             </div>
           ))}
