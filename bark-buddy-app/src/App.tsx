@@ -1,14 +1,23 @@
-import { Route, Routes } from "react-router-dom";
-import Login from "./pages/Login";
-import Search from "./pages/Search";
+// src/App.tsx
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { AuthProvider } from "./context/AuthContext";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
+import PrivateRoute from "./components/PrivateRoute";
 
-function App() {
+const App: React.FC = () => {
   return (
-    <Routes>
-      <Route path="/" element={<Login />} />
-      <Route path="/search" element={<Search />} />
-    </Routes>
+    <AuthProvider>
+      <Router>
+        <Routes>
+          <Route path="/" element={<LoginPage />} />
+          <Route element={<PrivateRoute />}>
+            <Route path="/home" element={<HomePage />} />
+          </Route>
+        </Routes>
+      </Router>
+    </AuthProvider>
   );
-}
+};
 
 export default App;

@@ -1,17 +1,15 @@
 import { useState } from "react";
+import { useAuth } from "../../context/AuthContext";
 
-interface LoginProps {
-  onLogin: () => void;
-}
-
-const Login: React.FC<LoginProps> = ({ onLogin }) => {
-  const [name, setName] = useState<string>("");
+const Login: React.FC = () => {
+  const { login } = useAuth();
   const [email, setEmail] = useState<string>("");
+  const [name, setName] = useState<string>("");
   const [error, setError] = useState<string>("");
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setError(""); // Clear previous errors
+    setError("");
 
     try {
       const response = await fetch(
@@ -32,7 +30,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
 
       const data = await response.json();
       console.log("Login successful:", data);
-      onLogin(); // Call parent function to indicate login success
+      login(); // Use the context to log in
     } catch (error: unknown) {
       if (error instanceof Error) {
         setError(error.message);
