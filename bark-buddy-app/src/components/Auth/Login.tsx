@@ -1,45 +1,32 @@
 import { useState } from "react";
 import { useAuth } from "../../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
-const Login: React.FC = () => {
+interface LoginProps {
+  onLogin: () => void;
+}
+
+const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const { login } = useAuth();
-  const [email, setEmail] = useState<string>("");
   const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string>("");
+  const navigate = useNavigate(); // For redirecting after successful login
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setError("");
 
     try {
-      const response = await fetch(
-        "https://frontend-take-home-service.fetch.com/auth/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({ name, email }),
-          credentials: "include",
-        }
+      await login(name, email); // Call login function from AuthContext
+      onLogin(); // Trigger the onLogin function passed as prop
+      navigate("/search");
+    } catch (error) {
+      setError(
+        error instanceof Error ? error.message : "An unexpected error occurred."
       );
-
-      if (!response.ok) {
-        throw new Error("Login failed. Check your credentials.");
-      }
-
-      const data = await response.json();
-      console.log("Login successful:", data);
-      login(); // Use the context to log in
-    } catch (error: unknown) {
-      if (error instanceof Error) {
-        setError(error.message);
-      } else {
-        setError("An unexpected error occurred.");
-      }
     }
   };
-
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="bg-white p-6 rounded-lg shadow-md w-96">
