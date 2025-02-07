@@ -1,36 +1,74 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
 
-const Login = () => {
-  const [username, setUsername] = useState("");
-  const navigate = useNavigate();
+interface LoginProps {
+  onLogin: () => void;
+}
 
-  const handleLogin = (e: React.FormEvent) => {
+const Login: React.FC<LoginProps> = ({ onLogin }) => {
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
+  const [error, setError] = useState<string>("");
+
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (username.trim()) {
-      navigate(`/search?user=${username}`);
+    setError(""); // Clear previous errors
+
+    try {
+      const response = await fetch(
+        "https://frontend-take-home-service.fetch.com/auth/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, email }),
+          credentials: "include",
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Login failed. Check your credentials.");
+      }
+
+      const data = await response.json();
+      console.log("Login successful:", data);
+      onLogin(); // Call parent function to indicate login success
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        setError(error.message);
+      } else {
+        setError("An unexpected error occurred.");
+      }
     }
   };
 
   return (
-    <div className="flex h-screen items-center justify-center bg-gray-100">
-      <div className="p-6 bg-white shadow-lg rounded-xl w-96">
-        <h2 className="text-2xl font-bold text-center mb-4">Login</h2>
-        <form onSubmit={handleLogin} className="space-y-4">
+    <div className="flex items-center justify-center min-h-screen bg-gray-100">
+      <div className="bg-white p-6 rounded-lg shadow-md w-96">
+        <h2 className="text-2xl font-semibold text-center mb-4">Login</h2>
+        <form onSubmit={handleSubmit} className="flex flex-col gap-4">
           <input
             type="text"
-            placeholder="Enter username"
-            value={username}
-            onChange={(e) => setUsername(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg"
+            placeholder="Name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+            className="p-2 border rounded"
+          />
+          <input
+            type="email"
+            placeholder="Email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            className="p-2 border rounded"
           />
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 rounded-lg hover:bg-blue-600 transition"
+            className="bg-blue-500 text-white py-2 rounded hover:bg-blue-600"
           >
-            Continue
+            Login
           </button>
         </form>
+        {error && <p className="text-red-500 mt-2 text-center">{error}</p>}
       </div>
     </div>
   );
