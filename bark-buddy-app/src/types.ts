@@ -20,3 +20,10 @@ export interface Coordinates {
   lat: number;
   lon: number;
 }
+
+export interface SearchParams {
+  breed: string;
+  zip: string;
+  ageMin: number;
+  ageMax: number;
+}

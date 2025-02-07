@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
+import apiClient from "../utils/apiClient";
 
 interface AuthContextProps {
   authToken: string | null;
@@ -14,48 +15,37 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   const [authToken, setAuthToken] = useState<string | null>(null);
 
   const login = async (name: string, email: string) => {
-    const response = await fetch(
-      "https://frontend-take-home-service.fetch.com/auth/login",
-      {
+    try {
+      // Use apiClient to make the login request
+      const response = await apiClient("/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({ name, email }),
-        credentials: "include",
-      }
-    );
+      });
 
-    if (!response.ok) {
-      throw new Error("Login failed");
-    }
-
-    const responseText = await response.text();
-
-    try {
-      const data = JSON.parse(responseText);
-      setAuthToken(data.token);
-    } catch (error) {
-      if (responseText === "OK") {
-        setAuthToken("authenticated");
+      // Handle the response
+      if (response === "OK") {
+        setAuthToken("authenticated"); // Set a placeholder token
       } else {
         throw new Error("Unexpected response format");
       }
+    } catch (error) {
+      throw new Error("Login failed");
     }
   };
 
   const logout = async () => {
-    const response = await fetch(
-      "https://frontend-take-home-service.fetch.com/auth/logout",
-      {
+    try {
+      await apiClient("/auth/logout", {
         method: "POST",
-        credentials: "include", // Ensure the cookie is sent with the request
-      }
-    );
+      });
 
-    if (!response.ok) throw new Error("Logout failed");
-
-    setAuthToken(null); // Clear the auth token from the app state
+      setAuthToken(null); // Clear the auth token
+    } catch (error) {
+      throw new Error("Logout failed");
+    }
   };
 
   return (

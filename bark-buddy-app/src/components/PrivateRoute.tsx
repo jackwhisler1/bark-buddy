@@ -7,7 +7,7 @@ const PrivateRoute: React.FC = () => {
 
   if (!authToken) {
     // If no authToken is present, redirect to login page
-    return <Navigate to="/" />;
+    return <Navigate to="/login" />;
   }
 
   // If authToken is present, allow access to the route

@@ -4,7 +4,6 @@ import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import PrivateRoute from "./components/PrivateRoute";
-import SearchPage from "./pages/SearchPage";
 
 const App: React.FC = () => {
   const handleLogin = () => {
@@ -14,10 +13,9 @@ const App: React.FC = () => {
   return (
     <AuthProvider>
       <Routes>
-        <Route path="/" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route element={<PrivateRoute />}>
-          <Route path="/home" element={<HomePage />} />
-          <Route path="/search" element={<SearchPage />} />
+          <Route path="/" element={<HomePage />} />
         </Route>
       </Routes>
     </AuthProvider>

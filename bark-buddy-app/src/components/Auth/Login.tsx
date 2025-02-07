@@ -8,8 +8,8 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const { login } = useAuth();
-  const [name, setName] = useState<string>("");
-  const [email, setEmail] = useState<string>("");
+  const [name, setName] = useState<string>("Test");
+  const [email, setEmail] = useState<string>("test@email.com");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate(); // For redirecting after successful login
 
@@ -20,7 +20,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     try {
       await login(name, email); // Call login function from AuthContext
       onLogin(); // Trigger the onLogin function passed as prop
-      navigate("/search");
+      navigate("/");
     } catch (error) {
       setError(
         error instanceof Error ? error.message : "An unexpected error occurred."
