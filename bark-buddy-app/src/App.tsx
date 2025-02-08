@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/AuthContext";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import PrivateRoute from "./components/PrivateRoute";
+import MatchPage from "./pages/MatchPage";
 
 const App: React.FC = () => {
   const handleLogin = () => {
@@ -16,6 +17,9 @@ const App: React.FC = () => {
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<HomePage />} />
+        </Route>
+        <Route element={<PrivateRoute />}>
+          <Route path="/match" element={<MatchPage />} />
         </Route>
       </Routes>
     </AuthProvider>

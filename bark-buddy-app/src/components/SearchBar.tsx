@@ -25,8 +25,16 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     fetchBreeds();
   }, []);
 
-  const handleSearch = () => {
+  const handleBreedChange = (selected: any) => {
+    const selectedBreeds = selected.map((option: any) => option.value);
+    setSelectedBreeds(selectedBreeds);
     onSearch({ breeds: selectedBreeds, sort });
+  };
+
+  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    const selectedSort = event.target.value;
+    setSort(selectedSort);
+    onSearch({ breeds: selectedBreeds, sort: selectedSort });
   };
 
   const breedOptions = breeds.map((breed) => ({ value: breed, label: breed }));
@@ -40,27 +48,21 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           value={breedOptions.filter((option) =>
             selectedBreeds.includes(option.value)
           )}
-          onChange={(selected) =>
-            setSelectedBreeds(selected.map((option) => option.value))
-          }
+          onChange={handleBreedChange}
           placeholder="Select Breeds"
           className="w-full"
         />
       </div>
       <select
         value={sort}
-        onChange={(e) => setSort(e.target.value)}
+        onChange={handleSortChange}
         className="p-2 border rounded-md"
       >
         <option value="breed:asc">Sort by Breed (A-Z)</option>
         <option value="breed:desc">Sort by Breed (Z-A)</option>
+        <option value="age:asc">Sort by Age (Youngest First)</option>
+        <option value="age:desc">Sort by Age (Oldest First)</option>
       </select>
-      <button
-        onClick={handleSearch}
-        className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
-      >
-        Search
-      </button>
     </div>
   );
 };
