@@ -1,5 +1,6 @@
 import { useLocation } from "react-router-dom";
 import { Dog } from "../types";
+import Footer from "../components/Footer";
 
 const MatchPage = () => {
   const location = useLocation();
@@ -29,6 +30,7 @@ const MatchPage = () => {
           <p className="text-center">No match found.</p>
         )}
       </div>
+      <Footer />
     </div>
   );
 };

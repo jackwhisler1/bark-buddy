@@ -3,6 +3,7 @@ import DogList from "../components/DogList";
 import apiClient from "../utils/apiClient";
 import { useNavigate } from "react-router-dom";
 import Navbar from "../components/Navbar";
+import Footer from "../components/Footer";
 
 const HomePage = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
@@ -40,18 +41,19 @@ const HomePage = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 p-6">
+    <div className="min-h-screen flex flex-col bg-gray-100">
       <Navbar />
-      <div className="flex justify-center mt-6">
+      <div className="flex-grow flex flex-col items-center justify-center p-6">
         <button
           onClick={handleMatch}
           disabled={favorites.length === 0}
-          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
+          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed mb-6"
         >
           Match My Bark Buddy
         </button>
+        <DogList onFavorite={handleFavorite} favorites={favorites} />
       </div>
-      <DogList onFavorite={handleFavorite} favorites={favorites} />
+      <Footer />
     </div>
   );
 };
