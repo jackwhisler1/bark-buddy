@@ -28,16 +28,16 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
   const fetchDogs = async (query?: string) => {
     setLoading(true);
     try {
-      let searchParams = new URLSearchParams();
+      let searchParams = new URLSearchParams(query || "");
 
       if (!query) {
         if (filters.breeds.length > 0) {
-          searchParams.append("breeds", filters.breeds.join(","));
+          filters.breeds.forEach((breed) =>
+            searchParams.append("breeds", breed)
+          );
         }
-        searchParams.append("sort", "breed:asc");
+        searchParams.append("sort", filters.sort);
         searchParams.append("size", "24");
-      } else {
-        searchParams = new URLSearchParams(query);
       }
 
       const finalQueryString = searchParams.toString();
