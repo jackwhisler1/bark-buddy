@@ -42,7 +42,7 @@ const Navbar: React.FC<NavbarProps> = ({
               </li>
               <li>
                 <Link to="/about" className="text-white hover:underline">
-                  About Us
+                  About
                 </Link>
               </li>
               <li>

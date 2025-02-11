@@ -5,6 +5,7 @@ import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import PrivateRoute from "./components/PrivateRoute";
 import MatchPage from "./pages/MatchPage";
+import AboutPage from "./pages/AboutPage";
 
 const App: React.FC = () => {
   const handleLogin = () => {
@@ -15,6 +16,8 @@ const App: React.FC = () => {
     <AuthProvider>
       <Routes>
         <Route path="/login" element={<LoginPage onLogin={handleLogin} />} />
+        <Route path="/about" element={<AboutPage />} />
+
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<HomePage />} />
         </Route>
