@@ -36,7 +36,9 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   }, []);
 
   const handleBreedChange = (selected: any) => {
-    setSelectedBreeds(selected.map((option: any) => option.value));
+    setSelectedBreeds(
+      selected ? selected.map((option: any) => option.value) : []
+    );
   };
 
   const handleZipCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -50,8 +52,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     setDistance(selected ? selected.value : undefined);
   };
 
-  const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSort(event.target.value);
+  const handleSortChange = (selected: any) => {
+    setSort(selected ? selected.value : "breed:asc");
   };
 
   const handleAgeMinChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -113,9 +115,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     { value: 50, label: "50mi" },
     { value: 100, label: "100mi" },
   ];
+  const sortOptions = [
+    { value: "breed:asc", label: "Sort by Breed (A-Z)" },
+    { value: "breed:desc", label: "Sort by Breed (Z-A)" },
+    { value: "age:asc", label: "Sort by Age (Youngest First)" },
+    { value: "age:desc", label: "Sort by Age (Oldest First)" },
+  ];
 
   return (
-    <div className="bg-white p-6 rounded-lg shadow-md flex flex-wrap gap-2 items-center w-full max-w-12xl mx-auto">
+    <div className="bg-white p-6 rounded-lg shadow-md flex flex-wrap gap-2 items-center w-full max-w-12xl mx-auto mb-4">
       <div className="min-w-[20rem] flex max-w-sm">
         <Select
           isMulti
@@ -175,16 +183,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         />
       </div>
       <div className="flex-shrink-0 w-full sm:w-1/5">
-        <select
-          value={sort}
+        <Select
+          options={sortOptions}
+          value={sortOptions.find((option) => option.value === sort)}
           onChange={handleSortChange}
-          className="p-2 border border-gray-300 rounded-md w-full input-focus-blue"
-        >
-          <option value="breed:asc">Sort by Breed (A-Z)</option>
-          <option value="breed:desc">Sort by Breed (Z-A)</option>
-          <option value="age:asc">Sort by Age (Youngest First)</option>
-          <option value="age:desc">Sort by Age (Oldest First)</option>
-        </select>
+          placeholder="Sort"
+          className="react-select-container"
+        />
       </div>
       <div className="flex-shrink-0 sm:w-auto">
         <button

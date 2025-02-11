@@ -7,6 +7,7 @@ import Footer from "../components/Footer";
 
 const HomePage = () => {
   const [favorites, setFavorites] = useState<string[]>([]);
+  const [viewFavorites, setViewFavorites] = useState<boolean>(false);
   const navigate = useNavigate();
 
   const handleFavorite = (id: string) => {
@@ -42,16 +43,24 @@ const HomePage = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-gray-100">
-      <Navbar />
-      <div className="flex-grow flex flex-col items-center justify-center p-6">
+      <Navbar
+        viewFavorites={viewFavorites}
+        setViewFavorites={setViewFavorites}
+        favorites={favorites}
+      />
+      <div className="flex-grow flex flex-col items-center justify-center p-6 mt-15">
         <button
           onClick={handleMatch}
           disabled={favorites.length === 0}
-          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed mb-6"
+          className="bg-green-500 text-white px-4 py-2 rounded-md hover:bg-green-600 disabled:bg-gray-400 disabled:cursor-not-allowed"
         >
           Match My Bark Buddy
         </button>
-        <DogList onFavorite={handleFavorite} favorites={favorites} />
+        <DogList
+          onFavorite={handleFavorite}
+          favorites={favorites}
+          viewFavorites={viewFavorites}
+        />
       </div>
       <Footer />
     </div>

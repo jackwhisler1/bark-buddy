@@ -157,9 +157,10 @@ export const fetchDogs = async (
         next: pageNumber + 1,
         prev: pageNumber > 0 ? pageNumber - 1 : null,
       },
+      total: searchResults.total,
     };
   } catch (error) {
     console.error("Error fetching dogs:", error);
-    return { dogs: [], pagination: { next: null, prev: null } };
+    return { dogs: [], pagination: { next: null, prev: null }, total: 0 };
   }
 };
