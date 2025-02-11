@@ -7,10 +7,10 @@ interface SearchBarProps {
   onSearch: (filters: {
     breeds: string[];
     zipCode: string;
-    distance?: number;
+    ageMin: number | undefined;
+    ageMax: number | undefined;
+    distance: number | undefined;
     sort: string;
-    ageMin?: number;
-    ageMax?: number;
   }) => void;
 }
 
@@ -77,22 +77,18 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     const filters: {
       breeds: string[];
       zipCode: string;
-      distance?: number;
+      distance: number | undefined;
       sort: string;
-      ageMin?: number;
-      ageMax?: number;
+      ageMin: number | undefined;
+      ageMax: number | undefined;
     } = {
       breeds: selectedBreeds,
       zipCode,
       sort,
       ageMin,
       ageMax,
+      distance: /^\d{5}$/.test(zipCode) ? distance : undefined,
     };
-
-    // Only include distance if a valid 5-digit ZIP code is provided
-    if (/^\d{5}$/.test(zipCode)) {
-      filters.distance = distance;
-    }
 
     onSearch(filters);
   };
@@ -147,10 +143,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           placeholder="Enter ZIP Code"
           pattern="^\d{5}$"
           maxLength={5}
-          className="p-2 border rounded-md w-full input-focus-blue"
+          className="p-2 border border-gray-300 rounded-md w-full input-focus-blue"
         />
       </div>
-      <div className="flex-shrink-0 w-full sm:w-1/8">
+      <div className="flex-shrink-0 w-full sm:w-1/10">
         <Select
           options={distanceOptions}
           value={distanceOptions.find((option) => option.value === distance)}

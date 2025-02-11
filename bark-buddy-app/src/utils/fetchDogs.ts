@@ -113,15 +113,17 @@ export const fetchDogs = async (
 
       // Limit the number of ZIP codes to 50
       const maxZipCodes = 50;
-      nearbyZipsResponse.results.forEach((loc, index) => {
-        if (index < maxZipCodes) {
-          zipCodes.add(loc.zip_code);
+      nearbyZipsResponse.results.forEach(
+        (loc: { zip_code: string }, index: number) => {
+          if (index < maxZipCodes) {
+            zipCodes.add(loc.zip_code);
+          }
         }
-      });
+      );
     }
 
     Array.from(zipCodes).forEach((zipCode) =>
-      searchParams.append("zipCodes", zipCode)
+      searchParams.append("zipCodes", zipCode as string)
     );
   }
 
