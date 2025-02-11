@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import Select from "react-select";
 import apiClient from "../utils/apiClient";
 import "../styling/styles.css";
-import { width } from "@fortawesome/free-brands-svg-icons/fa42Group";
 
 interface SearchBarProps {
   onSearch: (filters: {
@@ -33,7 +32,6 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
         console.error("Error fetching breeds:", error);
       }
     };
-
     fetchBreeds();
   }, []);
 
@@ -42,12 +40,14 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   };
 
   const handleZipCodeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setZipCode(event.target.value);
+    const { value } = event.target;
+    if (/^\d{0,5}$/.test(value)) {
+      setZipCode(value);
+    }
   };
 
-  const handleDistanceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const value = parseInt(event.target.value);
-    setDistance(isNaN(value) ? undefined : value);
+  const handleDistanceChange = (selected: any) => {
+    setDistance(selected ? selected.value : undefined);
   };
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -72,14 +72,27 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   };
 
   const handleSearchClick = async () => {
-    onSearch({
+    const filters: {
+      breeds: string[];
+      zipCode: string;
+      distance?: number;
+      sort: string;
+      ageMin?: number;
+      ageMax?: number;
+    } = {
       breeds: selectedBreeds,
       zipCode,
-      distance,
       sort,
       ageMin,
       ageMax,
-    });
+    };
+
+    // Only include distance if a valid 5-digit ZIP code is provided
+    if (/^\d{5}$/.test(zipCode)) {
+      filters.distance = distance;
+    }
+
+    onSearch(filters);
   };
 
   const styles = {
@@ -89,10 +102,17 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       maxWidth: "20rem",
       minWidth: "20rem",
       maxHeight: "5rem",
-      // overflowY: "auto",
     }),
   };
+
   const breedOptions = breeds.map((breed) => ({ value: breed, label: breed }));
+  const distanceOptions = [
+    { value: 5, label: "5mi" },
+    { value: 10, label: "10mi" },
+    { value: 20, label: "20mi" },
+    { value: 50, label: "50mi" },
+    { value: 100, label: "100mi" },
+  ];
 
   return (
     <div className="bg-white p-6 rounded-lg shadow-md flex flex-wrap gap-2 items-center w-full max-w-12xl mx-auto">
@@ -111,27 +131,28 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           styles={styles}
         />
       </div>
-      <div className="flex-shrink-0 w-full sm:w-1/7">
+      <div className="flex-shrink-0 w-full sm:w-1/9">
         <input
           type="text"
           value={zipCode}
           onChange={handleZipCodeChange}
           placeholder="Enter ZIP Code"
-          maxLength={5}
           pattern="^\d{5}$"
+          maxLength={5}
           className="p-2 border rounded-md w-full input-focus-blue"
         />
-      </div>{" "}
-      <div className="flex-shrink-0 w-full sm:w-1/7">
-        <input
-          type="number"
-          value={distance || ""}
+      </div>
+      <div className="flex-shrink-0 w-full sm:w-1/8">
+        <Select
+          options={distanceOptions}
+          value={distanceOptions.find((option) => option.value === distance)}
+          isDisabled={!/^\d{5}$/.test(zipCode)}
           onChange={handleDistanceChange}
-          placeholder="Distance (miles)"
-          className="p-2 border rounded-md w-full"
+          placeholder="Distance"
+          className="react-select-container"
         />
       </div>
-      <div className="flex-shrink-0 w-1/10 sm:w-1/9">
+      <div className="flex-shrink-0 w-1/10 sm:w-1/12">
         <input
           type="number"
           value={ageMin || ""}
@@ -142,7 +163,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           max={20}
         />
       </div>
-      <div className="flex-shrink-0 w-1/10 sm:w-1/9">
+      <div className="flex-shrink-0 w-1/10 sm:w-1/12">
         <input
           type="number"
           value={ageMax || ""}
@@ -165,7 +186,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           <option value="age:desc">Sort by Age (Oldest First)</option>
         </select>
       </div>
-      <div className="flex-shrink-0  sm:w-auto">
+      <div className="flex-shrink-0 sm:w-auto">
         <button
           onClick={handleSearchClick}
           className="bg-blue-500 text-white py-2 px-4 rounded-md w-full sm:w-auto"

@@ -1,4 +1,4 @@
-import { getNavigate } from "./navigate";
+import { getNavigate } from "./navigation";
 
 const apiClient = async (url: string, options: RequestInit = {}) => {
   const fullUrl = `https://frontend-take-home-service.fetch.com${url}`;

@@ -21,22 +21,23 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
     distance: undefined as number | undefined,
     sort: "breed:asc", // Default sorting
   });
+
   const [dogs, setDogs] = useState<Dog[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
-  const [pagination, setPagination] = useState<{
-    next?: string;
-    prev?: string;
-  }>({});
+  const [pageNumber, setPageNumber] = useState<number>(0);
   const [viewFavorites, setViewFavorites] = useState(false);
   const [allFavoriteDogs, setAllFavoriteDogs] = useState<Dog[]>([]);
-  const [currentPage, setCurrentPage] = useState(1);
 
-  const loadDogs = async (pageUrl?: string) => {
+  const loadDogs = async (pageNumber: number = 0) => {
     setLoading(true);
     try {
-      const { dogs, pagination } = await fetchDogs(filters, pageUrl);
+      const { dogs, pagination } = await fetchDogs(
+        filters,
+        undefined,
+        pageNumber
+      );
       setDogs(dogs);
-      setPagination(pagination);
+      setPageNumber(pageNumber);
     } catch (error) {
       console.error("Error loading dogs:", error);
     } finally {
@@ -75,128 +76,18 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
 
   const displayedDogs = viewFavorites ? allFavoriteDogs : dogs;
 
-  // const handleSearch = async ({
-  //   breeds,
-  //   zipCode,
-  //   distance,
-  //   sort,
-  //   ageMin,
-  //   ageMax,
-  // }: {
-  //   breeds: string[];
-  //   zipCode: string;
-  //   distance?: number;
-  //   sort: string;
-  //   ageMin?: number;
-  //   ageMax?: number;
-  // }) => {
-  //   // Update filters state for search
-  //   setFilters({
-  //     breeds,
-  //     zipCode,
-  //     distance,
-  //     sort, // Ensure we're passing the selected sort
-  //     ageMin,
-  //     ageMax,
-  //   });
-  // };
-  const handleSearch = async ({
-    breeds,
-    zipCode,
-    distance,
-    sort,
-    ageMin,
-    ageMax,
-  }: {
-    breeds: string[];
-    zipCode: string;
-    distance?: number;
-    sort: string;
-    ageMin?: number;
-    ageMax?: number;
-  }) => {
-    try {
-      setLoading(true);
-
-      // Start with the primary zip code provided
-      let zipCodes = [zipCode];
-
-      if (distance) {
-        // Get lat/lon for the entered ZIP code
-        const locationData = await apiClient("/locations", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify([zipCode]),
-        });
-
-        if (!locationData.length) throw new Error("Invalid ZIP Code");
-
-        const { latitude, longitude } = locationData[0];
-
-        // Find all ZIP codes within the distance radius
-        const nearbyZipsResponse = await apiClient("/locations/search", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({
-            geoBoundingBox: {
-              bottom_left: { lat: latitude - 0.1, lon: longitude - 0.1 },
-              top_right: { lat: latitude + 0.1, lon: longitude + 0.1 },
-            },
-            size: 1000,
-          }),
-        });
-
-        // Include nearby zip codes, avoiding duplicates
-        zipCodes = Array.from(
-          new Set([
-            ...zipCodes,
-            ...nearbyZipsResponse.results.map((loc: any) => loc.zip_code),
-          ])
-        );
-      }
-
-      const queryParams = new URLSearchParams({
-        size: "24",
-        sort,
-      });
-
-      breeds.forEach((breed) => queryParams.append("breeds", breed));
-      console.log(zipCodes);
-      // Append all unique zip codes to the query
-      if (zipCodes.length > 0 && zipCodes[0] !== "") {
-        zipCodes.forEach((zipCode) => queryParams.append("zipCodes", zipCode));
-      }
-      if (ageMin !== undefined) queryParams.append("ageMin", ageMin.toString());
-      if (ageMax !== undefined) queryParams.append("ageMax", ageMax.toString());
-
-      const dogSearchResults = await apiClient(
-        `/dogs/search?${queryParams.toString()}`,
-        {
-          method: "GET",
-          headers: { "Content-Type": "application/json" },
-        }
-      );
-
-      const dogIds = dogSearchResults.resultIds;
-
-      // Fetch detailed dog data
-      const dogsData = await apiClient("/dogs", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(dogIds),
-      });
-
-      setDogs(dogsData);
-    } catch (error) {
-      console.error("Error fetching dogs:", error);
-    } finally {
-      setLoading(false);
-    }
+  const handleSearch = async (newFilters) => {
+    setFilters(newFilters);
+    setPageNumber(0); // Reset to the first page when new filters are applied
   };
 
-  const handlePageChange = (pageUrl: string) => {
-    loadDogs(pageUrl);
+  const handlePageChange = (newPageNumber: number) => {
+    loadDogs(newPageNumber);
   };
+
+  // Check conditions to hide the "Next" button
+  const shouldHideNextButton =
+    filters.zipCode && filters.distance !== undefined;
 
   return (
     <div className="mt-6">
@@ -271,17 +162,17 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
         </div>
       )}
       <div className="flex justify-center mt-6 gap-4">
-        {pagination.prev && (
+        {pageNumber > 0 && (
           <button
-            onClick={() => handlePageChange(pagination.prev!)}
+            onClick={() => handlePageChange(pageNumber - 1)}
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
           >
             Previous
           </button>
         )}
-        {dogs.length >= 24 && pagination.next && (
+        {!shouldHideNextButton && (
           <button
-            onClick={() => handlePageChange(pagination.next!)}
+            onClick={() => handlePageChange(pageNumber + 1)}
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
           >
             Next
