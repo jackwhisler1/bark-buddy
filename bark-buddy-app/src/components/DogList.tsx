@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, SetStateAction } from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { Dog } from "../types";
 import { faHeart as solidHeart } from "@fortawesome/free-solid-svg-icons";
@@ -31,11 +31,7 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
   const loadDogs = async (pageNumber: number = 0) => {
     setLoading(true);
     try {
-      const { dogs, pagination } = await fetchDogs(
-        filters,
-        undefined,
-        pageNumber
-      );
+      const { dogs } = await fetchDogs(filters, undefined, pageNumber);
       setDogs(dogs);
       setPageNumber(pageNumber);
     } catch (error) {
@@ -76,7 +72,16 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
 
   const displayedDogs = viewFavorites ? allFavoriteDogs : dogs;
 
-  const handleSearch = async (newFilters) => {
+  const handleSearch = async (
+    newFilters: SetStateAction<{
+      breeds: string[];
+      zipCode: string;
+      ageMin: number | undefined;
+      ageMax: number | undefined;
+      distance: number | undefined;
+      sort: string;
+    }>
+  ) => {
     setFilters(newFilters);
     setPageNumber(0); // Reset to the first page when new filters are applied
   };
@@ -84,10 +89,6 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
   const handlePageChange = (newPageNumber: number) => {
     loadDogs(newPageNumber);
   };
-
-  // Check conditions to hide the "Next" button
-  const shouldHideNextButton =
-    filters.zipCode && filters.distance !== undefined;
 
   return (
     <div className="mt-6">
@@ -170,14 +171,14 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
             Previous
           </button>
         )}
-        {!shouldHideNextButton && (
+        {
           <button
             onClick={() => handlePageChange(pageNumber + 1)}
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
           >
             Next
           </button>
-        )}
+        }
       </div>
     </div>
   );

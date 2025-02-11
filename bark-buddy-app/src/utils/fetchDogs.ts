@@ -138,11 +138,6 @@ export const fetchDogs = async (
   searchParams.append("sort", filters.sort || "breed:asc");
   searchParams.append("size", "24");
 
-  // Set limit to 100 if both zipCode and distance are provided
-  if (filters.zipCode && filters.distance) {
-    searchParams.set("size", "100");
-  }
-
   const finalQueryString = searchParams.toString();
 
   try {
