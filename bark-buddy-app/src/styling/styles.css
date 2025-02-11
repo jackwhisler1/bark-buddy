@@ -1,0 +1,73 @@
+body {
+  caret-color: transparent;
+}
+
+input {
+  caret-color: black;
+}
+
+.input-focus-blue:focus {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 246, 0.5);
+  outline: none;
+}
+
+button {
+  cursor: pointer;
+}
+
+/* styles.css */
+.react-select-container {
+  width: 100%;
+}
+
+/* Optionally for custom styling of react-select */
+.react-select__control {
+  border: 1px solid #ccc;
+  box-shadow: none;
+}
+
+.react-select__control--is-focused {
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 1px rgba(59, 130, 247, 0.5);
+}
+
+.input-focus-blue:focus {
+  border-color: #3b82f6;
+}
+
+input,
+select {
+  transition: border-color 0.3s ease;
+}
+
+/*Custom chewy font for tagline */
+.chewy-regular {
+  font-family: "Chewy", serif;
+  font-weight: 400;
+  font-style: normal;
+}
+
+/* Custom scrollbar styles */
+::-webkit-scrollbar {
+  width: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* For Firefox */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #888 #f1f1f1;
+}

@@ -3,7 +3,7 @@ const apiClient = async (url: string, options: RequestInit = {}) => {
 
   const response = await fetch(fullUrl, {
     ...options,
-    credentials: "include", // Include cookies
+    credentials: "include",
   });
 
   if (!response.ok) {

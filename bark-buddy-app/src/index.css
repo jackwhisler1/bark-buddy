@@ -3,37 +3,4 @@
 @tailwind components;
 @tailwind utilities;
 
-body {
-  caret-color: transparent;
-}
-
-/*Custom chewy font for tagline */
-.chewy-regular {
-  font-family: "Chewy", serif;
-  font-weight: 400;
-  font-style: normal;
-}
-
-/* Custom scrollbar styles */
-::-webkit-scrollbar {
-  width: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #f1f1f1;
-}
-
-::-webkit-scrollbar-thumb {
-  background: #888;
-  border-radius: 4px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: #555;
-}
-
-/* For Firefox */
-* {
-  scrollbar-width: thin;
-  scrollbar-color: #888 #f1f1f1;
-}
+@import "./styling/styles.css";
