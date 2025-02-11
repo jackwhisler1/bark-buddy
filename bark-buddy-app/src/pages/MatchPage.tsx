@@ -15,7 +15,7 @@ const MatchPage = () => {
       ref.current.start();
       const stopTimer = setTimeout(() => {
         ref.current?.stop();
-      }, 5000);
+      }, 8000);
 
       return () => {
         clearTimeout(stopTimer);

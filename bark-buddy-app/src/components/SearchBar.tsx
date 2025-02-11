@@ -190,7 +190,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
       <div className="flex-shrink-0 sm:w-auto">
         <button
           onClick={handleSearchClick}
-          className="bg-blue-500 text-white py-2 px-4 rounded-md w-full sm:w-auto"
+          className="bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md w-full sm:w-auto"
           style={{ flexShrink: 0 }}
         >
           Search
