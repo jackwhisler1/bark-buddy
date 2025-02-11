@@ -45,11 +45,10 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
     setZipCode(event.target.value);
   };
 
-  // Commented out distance feature
-  // const handleDistanceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = parseInt(event.target.value);
-  //   setDistance(isNaN(value) ? undefined : value);
-  // };
+  const handleDistanceChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = parseInt(event.target.value);
+    setDistance(isNaN(value) ? undefined : value);
+  };
 
   const handleSortChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSort(event.target.value);
@@ -121,6 +120,15 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           maxLength={5}
           pattern="^\d{5}$"
           className="p-2 border rounded-md w-full input-focus-blue"
+        />
+      </div>{" "}
+      <div className="flex-shrink-0 w-full sm:w-1/7">
+        <input
+          type="number"
+          value={distance || ""}
+          onChange={handleDistanceChange}
+          placeholder="Distance (miles)"
+          className="p-2 border rounded-md w-full"
         />
       </div>
       <div className="flex-shrink-0 w-1/10 sm:w-1/9">

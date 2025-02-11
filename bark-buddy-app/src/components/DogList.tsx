@@ -75,6 +75,31 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
 
   const displayedDogs = viewFavorites ? allFavoriteDogs : dogs;
 
+  // const handleSearch = async ({
+  //   breeds,
+  //   zipCode,
+  //   distance,
+  //   sort,
+  //   ageMin,
+  //   ageMax,
+  // }: {
+  //   breeds: string[];
+  //   zipCode: string;
+  //   distance?: number;
+  //   sort: string;
+  //   ageMin?: number;
+  //   ageMax?: number;
+  // }) => {
+  //   // Update filters state for search
+  //   setFilters({
+  //     breeds,
+  //     zipCode,
+  //     distance,
+  //     sort, // Ensure we're passing the selected sort
+  //     ageMin,
+  //     ageMax,
+  //   });
+  // };
   const handleSearch = async ({
     breeds,
     zipCode,
@@ -90,15 +115,83 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
     ageMin?: number;
     ageMax?: number;
   }) => {
-    // Update filters state for search
-    setFilters({
-      breeds,
-      zipCode,
-      distance,
-      sort, // Ensure we're passing the selected sort
-      ageMin,
-      ageMax,
-    });
+    try {
+      setLoading(true);
+
+      // Start with the primary zip code provided
+      let zipCodes = [zipCode];
+
+      if (distance) {
+        // Get lat/lon for the entered ZIP code
+        const locationData = await apiClient("/locations", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify([zipCode]),
+        });
+
+        if (!locationData.length) throw new Error("Invalid ZIP Code");
+
+        const { latitude, longitude } = locationData[0];
+
+        // Find all ZIP codes within the distance radius
+        const nearbyZipsResponse = await apiClient("/locations/search", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({
+            geoBoundingBox: {
+              bottom_left: { lat: latitude - 0.1, lon: longitude - 0.1 },
+              top_right: { lat: latitude + 0.1, lon: longitude + 0.1 },
+            },
+            size: 1000,
+          }),
+        });
+
+        // Include nearby zip codes, avoiding duplicates
+        zipCodes = Array.from(
+          new Set([
+            ...zipCodes,
+            ...nearbyZipsResponse.results.map((loc: any) => loc.zip_code),
+          ])
+        );
+      }
+
+      const queryParams = new URLSearchParams({
+        size: "24",
+        sort,
+      });
+
+      breeds.forEach((breed) => queryParams.append("breeds", breed));
+      console.log(zipCodes);
+      // Append all unique zip codes to the query
+      if (zipCodes.length > 0 && zipCodes[0] !== "") {
+        zipCodes.forEach((zipCode) => queryParams.append("zipCodes", zipCode));
+      }
+      if (ageMin !== undefined) queryParams.append("ageMin", ageMin.toString());
+      if (ageMax !== undefined) queryParams.append("ageMax", ageMax.toString());
+
+      const dogSearchResults = await apiClient(
+        `/dogs/search?${queryParams.toString()}`,
+        {
+          method: "GET",
+          headers: { "Content-Type": "application/json" },
+        }
+      );
+
+      const dogIds = dogSearchResults.resultIds;
+
+      // Fetch detailed dog data
+      const dogsData = await apiClient("/dogs", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(dogIds),
+      });
+
+      setDogs(dogsData);
+    } catch (error) {
+      console.error("Error fetching dogs:", error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handlePageChange = (pageUrl: string) => {
@@ -180,7 +273,7 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
       <div className="flex justify-center mt-6 gap-4">
         {pagination.prev && (
           <button
-            onClick={() => handlePageChange(pagination.prev)}
+            onClick={() => handlePageChange(pagination.prev!)}
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
           >
             Previous
@@ -188,7 +281,7 @@ const DogList: React.FC<DogListProps> = ({ onFavorite, favorites }) => {
         )}
         {dogs.length >= 24 && pagination.next && (
           <button
-            onClick={() => handlePageChange(pagination.next)}
+            onClick={() => handlePageChange(pagination.next!)}
             className="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600"
           >
             Next

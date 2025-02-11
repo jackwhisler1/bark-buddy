@@ -1,5 +1,4 @@
 import apiClient from "./apiClient";
-import { Dog } from "../types";
 
 export const fetchDogs = async (
   filters: any,
@@ -8,7 +7,7 @@ export const fetchDogs = async (
 ) => {
   let searchParams = new URLSearchParams(query || "");
   if (page) {
-    searchParams.set("next", page || searchParams.get("next"));
+    searchParams.set("next", page || searchParams.get("next") || "");
   }
 
   // Build the search parameters based on filters
@@ -59,6 +58,6 @@ export const fetchDogs = async (
     };
   } catch (error) {
     console.error("Error fetching dogs:", error);
-    return { dogs: [], pagination: { next: null, prev: null } }; // Ensure consistent return type
+    return { dogs: [], pagination: { next: null, prev: null } };
   }
 };
