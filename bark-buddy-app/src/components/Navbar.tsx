@@ -1,4 +1,5 @@
 import { Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 import logo from "../assets/bark_buddy_logo.png";
 
 interface NavbarProps {
@@ -14,11 +15,20 @@ const Navbar: React.FC<NavbarProps> = ({
   favorites,
   showFavoritesButton = true,
 }) => {
+  const { logout } = useAuth();
+
+  const handleLogout = async () => {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Error logging out:", error);
+    }
+  };
+
   return (
     <>
       <header className="bg-[#1b2538] shadow-md fixed top-0 left-0 w-full z-50">
         <div className="container mx-auto flex items-center justify-between">
-          {/* Logo and Tagline */}
           <div className="flex items-center space-x-3">
             <Link to="/">
               <img
@@ -31,8 +41,6 @@ const Navbar: React.FC<NavbarProps> = ({
               Find Your New Best Friend
             </p>
           </div>
-
-          {/* Navigation */}
           <nav className="flex-grow flex justify-end">
             <ul className="flex space-x-4">
               <li>
@@ -46,15 +54,17 @@ const Navbar: React.FC<NavbarProps> = ({
                 </Link>
               </li>
               <li>
-                <Link to="/logout" className="text-white hover:underline">
+                <button
+                  onClick={handleLogout}
+                  className="text-white hover:underline"
+                >
                   Logout
-                </Link>
+                </button>
               </li>
             </ul>
           </nav>
         </div>
       </header>
-
       {showFavoritesButton && favorites && favorites.length > 0 && (
         <div className="fixed bottom-25 right-15 z-50">
           <button

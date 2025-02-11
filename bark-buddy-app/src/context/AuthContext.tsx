@@ -1,10 +1,11 @@
 import React, { createContext, useState, useContext, ReactNode } from "react";
 import apiClient from "../utils/apiClient";
+import { useNavigate } from "react-router-dom";
 
 interface AuthContextProps {
   authToken: string | null;
   login: (name: string, email: string) => Promise<void>;
-  logout: () => void;
+  logout: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextProps | undefined>(undefined);
@@ -13,10 +14,10 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
   children,
 }) => {
   const [authToken, setAuthToken] = useState<string | null>(null);
+  const navigate = useNavigate();
 
   const login = async (name: string, email: string) => {
     try {
-      // Use apiClient to make the login request
       const response = await apiClient("/auth/login", {
         method: "POST",
         headers: {
@@ -25,9 +26,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
         body: JSON.stringify({ name, email }),
       });
 
-      // Handle the response
       if (response === "OK") {
-        setAuthToken("authenticated"); // Set a placeholder token
+        setAuthToken("authenticated");
       } else {
         throw new Error("Unexpected response format");
       }
@@ -41,8 +41,8 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({
       await apiClient("/auth/logout", {
         method: "POST",
       });
-
-      setAuthToken(null); // Clear the auth token
+      setAuthToken(null);
+      navigate("/login");
     } catch (error) {
       throw new Error("Logout failed");
     }
