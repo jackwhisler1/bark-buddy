@@ -53,6 +53,7 @@ const HomePage = () => {
           onClick={handleMatch}
           disabled={favorites.length === 0}
           className="bg-[#2a3b50] text-white px-4 py-2 rounded-md hover:bg-[#1b2538] disabled:bg-gray-400 disabled:cursor-not-allowed"
+          style={{ cursor: favorites.length === 0 ? "not-allowed" : "pointer" }}
         >
           Match My Bark Buddy
         </button>

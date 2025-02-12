@@ -8,8 +8,8 @@ interface LoginProps {
 
 const Login: React.FC<LoginProps> = ({ onLogin }) => {
   const { login } = useAuth();
-  const [name, setName] = useState<string>("Test");
-  const [email, setEmail] = useState<string>("test@email.com");
+  const [name, setName] = useState<string>("");
+  const [email, setEmail] = useState<string>("");
   const [error, setError] = useState<string>("");
   const navigate = useNavigate(); // For redirecting after successful login
 
@@ -17,6 +17,10 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
     e.preventDefault();
     setError("");
 
+    if (!name || !email) {
+      setError("Please enter both name and email to log in.");
+      return;
+    }
     try {
       await login(name, email); // Call login function from AuthContext
       onLogin(); // Trigger the onLogin function passed as prop
