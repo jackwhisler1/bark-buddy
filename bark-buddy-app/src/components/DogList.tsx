@@ -36,11 +36,7 @@ const DogList: React.FC<DogListProps> = ({
   const loadDogs = async (pageNumber: number = 0) => {
     setLoading(true);
     try {
-      const { dogs, pagination, total } = await fetchDogs(
-        filters,
-        undefined,
-        pageNumber
-      );
+      const { dogs, total } = await fetchDogs(filters, undefined, pageNumber);
       setDogs(dogs);
       setPageNumber(pageNumber);
       setTotalResults(total);
