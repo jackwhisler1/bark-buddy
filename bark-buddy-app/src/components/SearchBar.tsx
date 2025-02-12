@@ -22,6 +22,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   const [sort, setSort] = useState("breed:asc");
   const [ageMin, setAgeMin] = useState<number | undefined>(undefined);
   const [ageMax, setAgeMax] = useState<number | undefined>(undefined);
+  const [isFocused, setIsFocused] = useState(false);
 
   useEffect(() => {
     const fetchBreeds = async () => {
@@ -94,12 +95,26 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   };
 
   const styles = {
-    container: (base: any) => ({
+    container: (base) => ({
       ...base,
       flex: 1,
-      maxWidth: "20rem",
-      minWidth: "20rem",
-      maxHeight: "5rem",
+      maxHeight: isFocused ? "20rem" : "3rem",
+      width: "50%",
+
+      transition: "max-width 0.2s, min-width 0.2s",
+    }),
+    control: (base) => ({
+      ...base,
+      flex: 1,
+      width: "100%",
+      maxHeight: isFocused ? "20rem" : "3rem",
+    }),
+    valueContainer: (base) => ({
+      ...base,
+      flex: 1,
+      width: "100%",
+
+      maxHeight: isFocused ? "20rem" : "1.9rem",
     }),
   };
 
@@ -133,6 +148,8 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           placeholder="Select Breeds"
           className="react-select-container"
           styles={styles}
+          onFocus={() => setIsFocused(true)} // Set focused state to true
+          onBlur={() => setIsFocused(false)} // Set focused state to false
         />
       </div>
       <div className="flex-shrink-0 w-full sm:w-1/9">
@@ -156,7 +173,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           className="react-select-container"
         />
       </div>
-      <div className="flex-shrink-0 w-1/10 sm:w-1/12">
+      <div className="flex-shrink-0 w-1/10 sm:w-1/14">
         <input
           type="number"
           value={ageMin || ""}
@@ -167,7 +184,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
           max={20}
         />
       </div>
-      <div className="flex-shrink-0 w-1/10 sm:w-1/12">
+      <div className="flex-shrink-0 w-1/10 sm:w-1/14">
         <input
           type="number"
           value={ageMax || ""}
