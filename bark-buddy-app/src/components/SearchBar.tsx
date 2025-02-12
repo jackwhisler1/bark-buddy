@@ -95,7 +95,7 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
   };
 
   const styles = {
-    container: (base) => ({
+    container: (base: any) => ({
       ...base,
       flex: 1,
       maxHeight: isFocused ? "20rem" : "3rem",
@@ -103,13 +103,13 @@ const SearchBar: React.FC<SearchBarProps> = ({ onSearch }) => {
 
       transition: "max-width 0.2s, min-width 0.2s",
     }),
-    control: (base) => ({
+    control: (base: any) => ({
       ...base,
       flex: 1,
       width: "100%",
       maxHeight: isFocused ? "20rem" : "3rem",
     }),
-    valueContainer: (base) => ({
+    valueContainer: (base: any) => ({
       ...base,
       flex: 1,
       width: "100%",
