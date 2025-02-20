@@ -59,7 +59,7 @@ const Login: React.FC<LoginProps> = ({ onLogin }) => {
         </form>
         {error && <p className="text-red-500 mt-2 text-center">{error}</p>}{" "}
         <p className="text-gray-500 mt-2 text-center italic">
-          You may input any name and email for demo purposes.
+          You may input any name and dummy email for demo purposes.
         </p>
       </div>
     </div>
